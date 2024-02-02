@@ -1,3 +1,4 @@
+// https://playwright.dev/docs/getting-started-vscode
 import { test, expect } from '@playwright/test';
 
 test('has title', async ({ page }) => {
