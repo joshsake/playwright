@@ -1,4 +1,5 @@
 // https://playwright.dev/docs/getting-started-vscode
+// Expects, page object calls, and any other validation belong here
 import { test, expect } from '@playwright/test';
 
 test('has title', async ({ page }) => {
