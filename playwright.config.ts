@@ -1,4 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
+
+const bddConfig = defineBddConfig({
+  features: 'features/*.feature',
+  steps: 'features/steps/*.ts',
+});
 
 export default defineConfig({
   testDir: './tests',
@@ -43,6 +49,11 @@ export default defineConfig({
       name: 'mobile-safari',
       use: { ...devices['iPhone 13'] },
       testMatch: '**/mobile.spec.ts',
+    },
+    {
+      name: 'bdd',
+      testDir: bddConfig,
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 });
