@@ -6,12 +6,27 @@
   "directories": {
     "test": "tests"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:homepage": "playwright test tests/homepage.spec.ts",
+    "test:docs": "playwright test tests/docs-navigation.spec.ts",
+    "test:search": "playwright test tests/search.spec.ts",
+    "test:api": "playwright test tests/api-reference.spec.ts",
+    "test:mobile": "playwright test --project=mobile-chrome --project=mobile-safari",
+    "report": "playwright show-report",
+    "test:bdd": "playwright test --project=bdd",
+    "bdd:gen": "bddgen"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.41.1",
-    "@types/node": "^20.11.16"
+    "@types/node": "^20.11.16",
+    "playwright-bdd": "^8.5.0"
   }
 }
