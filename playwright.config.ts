@@ -6,6 +6,12 @@ const bddConfig = defineBddConfig({
   steps: 'features/steps/*.ts',
 });
 
+const bddLighthouseConfig = defineBddConfig({
+  outputDir: '.features-gen-lighthouse',
+  features: 'features/lighthouse.feature',
+  steps: 'features/steps/*.ts',
+});
+
 export default defineConfig({
   testDir: './tests',
   timeout: 30_000,
@@ -54,6 +60,12 @@ export default defineConfig({
       name: 'bdd',
       testDir: bddConfig,
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'bdd-lighthouse',
+      testDir: bddLighthouseConfig,
+      use: { ...devices['Desktop Chrome'] },
+      workers: 1, // Lighthouse uses a fixed CDP port — must run serially
     },
   ],
 });

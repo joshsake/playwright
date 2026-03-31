@@ -18,6 +18,8 @@
     "test:mobile": "playwright test --project=mobile-chrome --project=mobile-safari",
     "report": "playwright show-report",
     "test:bdd": "playwright test --project=bdd",
+    "test:security": "playwright test --project=bdd --grep @security",
+    "test:lighthouse": "playwright test --project=bdd-lighthouse",
     "bdd:gen": "bddgen"
   },
   "keywords": [],
@@ -27,6 +29,7 @@
     "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.41.1",
     "@types/node": "^20.11.16",
+    "lighthouse": "^12.8.2",
     "playwright-bdd": "^8.5.0"
   }
 }
