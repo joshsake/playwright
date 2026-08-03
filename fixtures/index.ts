@@ -4,6 +4,7 @@ import { DocsPage } from '../pageobjects/docs-page';
 import { SearchModal } from '../pageobjects/search-modal';
 import { ApiPage } from '../pageobjects/api-page';
 import { CommunityPage } from '../pageobjects/community-page';
+import { TodoPage } from '../pageobjects/todo-page';
 
 type Fixtures = {
   homePage: HomePage;
@@ -11,6 +12,7 @@ type Fixtures = {
   searchModal: SearchModal;
   apiPage: ApiPage;
   communityPage: CommunityPage;
+  todoPage: TodoPage;
 };
 
 export const test = base.extend<Fixtures>({
@@ -28,6 +30,9 @@ export const test = base.extend<Fixtures>({
   },
   communityPage: async ({ page }, use) => {
     await use(new CommunityPage(page));
+  },
+  todoPage: async ({ page }, use) => {
+    await use(new TodoPage(page));
   },
 });
 
