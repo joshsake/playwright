@@ -1,69 +1,61 @@
 import { test, expect } from '../fixtures';
 
-test.describe('Language Tabs — Homepage', () => {
+// playwright.dev no longer renders language tabs on the homepage — language
+// switching now happens via hero links to each language's docs and a navbar
+// dropdown labeled with the current language (Node.js by default).
+
+test.describe('Language Links — Homepage Hero', () => {
   test.beforeEach(async ({ homePage }) => {
     await homePage.goto();
   });
 
-  test('Node.js tab is present', async ({ homePage }) => {
-    await expect(homePage.nodejsTab).toBeVisible();
+  test('TypeScript link is present', async ({ homePage }) => {
+    await expect(homePage.heroLanguageLink('TypeScript')).toBeVisible();
   });
 
-  test('Python tab is present', async ({ homePage }) => {
-    await expect(homePage.pythonTab).toBeVisible();
+  test('Python link is present and targets python docs', async ({ homePage }) => {
+    const link = homePage.heroLanguageLink('Python');
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute('href', /\/python\/docs\/intro/);
   });
 
-  test('Java tab is present', async ({ homePage }) => {
-    await expect(homePage.javaTab).toBeVisible();
+  test('Java link is present and targets java docs', async ({ homePage }) => {
+    const link = homePage.heroLanguageLink('Java');
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute('href', /\/java\/docs\/intro/);
   });
 
-  test('.NET tab is present', async ({ homePage }) => {
-    await expect(homePage.dotnetTab).toBeVisible();
-  });
-
-  test('clicking Python tab activates it', async ({ homePage }) => {
-    await homePage.selectLanguageTab('Python');
-    await expect(homePage.pythonTab).toHaveAttribute('aria-selected', 'true');
-    await expect(homePage.nodejsTab).toHaveAttribute('aria-selected', 'false');
-  });
-
-  test('clicking Java tab activates it', async ({ homePage }) => {
-    await homePage.selectLanguageTab('Java');
-    await expect(homePage.javaTab).toHaveAttribute('aria-selected', 'true');
-  });
-
-  test('clicking .NET tab activates it', async ({ homePage }) => {
-    await homePage.selectLanguageTab('.NET');
-    await expect(homePage.dotnetTab).toHaveAttribute('aria-selected', 'true');
-  });
-
-  test('switching to Python tab updates code example', async ({ homePage, page }) => {
-    await homePage.selectLanguageTab('Python');
-    const codeContent = await page.locator('.tabs-container pre').first().textContent();
-    expect(codeContent).toMatch(/from playwright|async_playwright|asyncio/i);
-  });
-
-  test('switching to Java tab updates code example', async ({ homePage, page }) => {
-    await homePage.selectLanguageTab('Java');
-    const codeContent = await page.locator('.tabs-container pre').first().textContent();
-    expect(codeContent).toMatch(/import com\.microsoft\.playwright|Playwright\.create/i);
-  });
-
-  test('switching to .NET tab updates code example', async ({ homePage, page }) => {
-    await homePage.selectLanguageTab('.NET');
-    const codeContent = await page.locator('.tabs-container pre').first().textContent();
-    expect(codeContent).toMatch(/Microsoft\.Playwright|await Playwright/i);
+  test('.NET link is present and targets dotnet docs', async ({ homePage }) => {
+    const link = homePage.heroLanguageLink('.NET');
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute('href', /\/dotnet\/docs\/intro/);
   });
 });
 
-test.describe('Language Tabs — Docs Pages', () => {
-  test('all four language tabs render on writing-tests page', async ({ docsPage, page }) => {
-    await docsPage.goto('/docs/writing-tests');
-    const tabs = page.getByRole('tab');
-    const tabTexts = await tabs.allTextContents();
-    expect(tabTexts).toContain('Node.js');
-    expect(tabTexts).toContain('Python');
-    expect(tabTexts).toContain('Java');
-    expect(tabTexts).toContain('.NET');
+test.describe('Language Switcher — Navbar', () => {
+  test.beforeEach(async ({ homePage }) => {
+    await homePage.goto();
+  });
+
+  test('language dropdown shows the current language', async ({ homePage }) => {
+    await expect(homePage.languageDropdown).toBeVisible();
+    await expect(homePage.languageDropdown).toHaveText(/Node\.js/);
+  });
+
+  test('language dropdown exposes the other languages', async ({ homePage, page }) => {
+    await homePage.languageDropdown.click();
+    const menu = page.locator('.navbar .dropdown__menu, .navbar [role="menu"]').first();
+    await expect(menu.getByRole('link', { name: 'Python' })).toBeVisible();
+    await expect(menu.getByRole('link', { name: 'Java' })).toBeVisible();
+    await expect(menu.getByRole('link', { name: '.NET' })).toBeVisible();
+  });
+});
+
+test.describe('Language Docs — Python variant', () => {
+  test('python docs pages serve python code samples', async ({ page }) => {
+    await page.goto('/python/docs/intro');
+    const code = page.locator('article pre').first();
+    await expect(code).toBeVisible();
+    await expect(page.locator('article')).toContainText(/pytest|pip install/i);
   });
 });

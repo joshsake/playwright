@@ -28,15 +28,6 @@ Then('I should be on a docs page', async ({ page }) => {
   await expect(page).toHaveURL(/\/docs\//);
 });
 
-When('I select the {string} language tab', async ({ homePage }, language: string) => {
-  await homePage.selectLanguageTab(language as 'Node.js' | 'Python' | 'Java' | '.NET');
-});
-
-Then('the {string} tab should be active', async ({ page }, language: string) => {
-  const activeTab = page.getByRole('tab', { name: language, selected: true });
-  await expect(activeTab).toBeVisible();
-});
-
 Then('I should see footer links', async ({ homePage }) => {
   await expect(homePage.footerLinks.first()).toBeVisible();
 });

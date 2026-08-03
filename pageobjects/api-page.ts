@@ -35,7 +35,7 @@ export class ApiPage {
     return this.methodHeadings.allTextContents();
   }
 
-  async scrollToMethod(name: string) {
+  async scrollToMethod(name: string | RegExp) {
     const heading = this.methodHeadings.filter({ hasText: name }).first();
     await heading.scrollIntoViewIfNeeded();
   }

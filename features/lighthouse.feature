@@ -1,3 +1,4 @@
+@lighthouse
 Feature: Lighthouse audits
 
   Scenario: Homepage meets best practices threshold

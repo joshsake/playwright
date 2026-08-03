@@ -4,6 +4,9 @@ import { defineBddConfig } from 'playwright-bdd';
 const bddConfig = defineBddConfig({
   features: 'features/*.feature',
   steps: 'features/steps/*.ts',
+  // Lighthouse runs only in the serial bdd-lighthouse project — its fixed CDP
+  // port collides when scenarios run in parallel workers here.
+  tags: 'not @lighthouse',
 });
 
 const bddLighthouseConfig = defineBddConfig({
@@ -37,17 +40,17 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: '**/api/**',
+      testIgnore: ['**/api/**', '**/mobile.spec.ts'],
     },
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
-      testIgnore: '**/api/**',
+      testIgnore: ['**/api/**', '**/mobile.spec.ts'],
     },
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-      testIgnore: '**/api/**',
+      testIgnore: ['**/api/**', '**/mobile.spec.ts'],
     },
     {
       name: 'api',

@@ -41,8 +41,9 @@ test.describe('Homepage — Navigation', () => {
     await expect(page.getByRole('link', { name: 'API' })).toBeVisible();
   });
 
-  test('top nav contains Community link', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'Community' })).toBeVisible();
+  test('top nav contains MCP and CLI links', async ({ page }) => {
+    await expect(page.getByRole('link', { name: 'MCP', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'CLI', exact: true })).toBeVisible();
   });
 
   test('clicking Docs nav link navigates to /docs/intro', async ({ homePage, page }) => {

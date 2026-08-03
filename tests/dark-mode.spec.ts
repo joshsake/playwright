@@ -1,57 +1,45 @@
 import { test, expect } from '../fixtures';
 
+// The theme button cycles system -> light -> dark rather than toggling two
+// states, so tests drive it through HomePage.setTheme().
+
 test.describe('Dark Mode Toggle', () => {
   test('theme toggle button is present', async ({ homePage }) => {
     await homePage.goto();
     await expect(homePage.themeToggle).toBeVisible();
   });
 
-  test('clicking theme toggle switches to dark mode', async ({ homePage, page }) => {
+  test('theme can be switched to dark mode', async ({ homePage, page }) => {
     await homePage.goto();
-    const htmlEl = page.locator('html');
-    const before = await htmlEl.getAttribute('data-theme');
-    if (before === 'dark') {
-      await homePage.toggleTheme();
-    }
-    await homePage.toggleTheme();
-    await expect(htmlEl).toHaveAttribute('data-theme', 'dark');
+    await homePage.setTheme('dark');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   });
 
-  test('dark mode toggles back to light mode', async ({ homePage, page }) => {
+  test('dark mode can be switched back to light mode', async ({ homePage, page }) => {
     await homePage.goto();
-    const htmlEl = page.locator('html');
-    await homePage.toggleTheme();
-    await homePage.toggleTheme();
-    const attr = await htmlEl.getAttribute('data-theme');
-    expect(attr).not.toBe('dark');
+    await homePage.setTheme('dark');
+    await homePage.setTheme('light');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   });
 
   test('dark mode persists on page reload', async ({ homePage, page }) => {
     await homePage.goto();
-    const htmlEl = page.locator('html');
-    const before = await htmlEl.getAttribute('data-theme');
-    if (before === 'dark') {
-      await homePage.toggleTheme();
-    }
-    await homePage.toggleTheme();
-    await expect(htmlEl).toHaveAttribute('data-theme', 'dark');
+    await homePage.setTheme('dark');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   });
 
   test('dark mode persists when navigating to docs', async ({ homePage, docsPage, page }) => {
     await homePage.goto();
-    const before = await page.locator('html').getAttribute('data-theme');
-    if (before !== 'dark') {
-      await homePage.toggleTheme();
-    }
+    await homePage.setTheme('dark');
     await docsPage.goto('/docs/intro');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   });
 
   test('code blocks are readable in dark mode', async ({ homePage, docsPage }) => {
     await homePage.goto();
-    await homePage.toggleTheme();
+    await homePage.setTheme('dark');
     await docsPage.goto('/docs/writing-tests');
     await expect(docsPage.codeBlocks.first()).toBeVisible();
   });

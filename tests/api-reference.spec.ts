@@ -29,18 +29,19 @@ test.describe('API Reference — Page Class', () => {
     await expect(apiPage.pageTitle).toContainText('Page');
   });
 
+  // Method headings are now the bare member name (e.g. "goto"), no class prefix
   test('page.goto method is documented', async ({ apiPage, page }) => {
-    await apiPage.scrollToMethod('page.goto');
+    await apiPage.scrollToMethod(/^goto/);
     const heading = page
       .locator('article h2, article h3')
-      .filter({ hasText: 'page.goto' });
+      .filter({ hasText: /^goto/ });
     await expect(heading.first()).toBeVisible();
   });
 
-  test('page.click or page.locator method is documented', async ({ page }) => {
+  test('page.locator method is documented', async ({ page }) => {
     const heading = page
       .locator('article h2, article h3')
-      .filter({ hasText: /page\.click|page\.locator/i });
+      .filter({ hasText: /^locator/ });
     await expect(heading.first()).toBeVisible();
   });
 
@@ -60,17 +61,17 @@ test.describe('API Reference — Locator Class', () => {
   });
 
   test('locator.click method is documented', async ({ apiPage, page }) => {
-    await apiPage.scrollToMethod('locator.click');
+    await apiPage.scrollToMethod(/^click/);
     const heading = page
       .locator('article h2, article h3')
-      .filter({ hasText: 'locator.click' });
+      .filter({ hasText: /^click/ });
     await expect(heading.first()).toBeVisible();
   });
 
   test('locator.fill method is documented', async ({ page }) => {
     const heading = page
       .locator('article h2, article h3')
-      .filter({ hasText: 'locator.fill' });
+      .filter({ hasText: /^fill/ });
     await expect(heading.first()).toBeVisible();
   });
 });

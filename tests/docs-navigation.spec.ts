@@ -39,14 +39,14 @@ test.describe('Docs — Sidebar Navigation', () => {
     await expect(docsPage.pageTitle).toContainText('Writing tests');
   });
 
-  test('clicking "Running tests" navigates correctly', async ({ docsPage, page }) => {
-    await docsPage.clickSidebarLink('Running tests');
+  test('clicking "Running and debugging tests" navigates correctly', async ({ docsPage, page }) => {
+    await docsPage.clickSidebarLink('Running and debugging tests');
     await expect(page).toHaveURL(/running-tests/);
   });
 
-  test('clicking "Debugging" navigates correctly', async ({ docsPage, page }) => {
-    await docsPage.clickSidebarLink('Debugging');
-    await expect(page).toHaveURL(/debug/);
+  test('clicking "Trace viewer" navigates correctly', async ({ docsPage, page }) => {
+    await docsPage.clickSidebarLink('Trace viewer');
+    await expect(page).toHaveURL(/trace-viewer/);
   });
 });
 
