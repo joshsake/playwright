@@ -37,14 +37,22 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: '**/api/**',
     },
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
+      testIgnore: '**/api/**',
     },
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: '**/api/**',
+    },
+    {
+      name: 'api',
+      testMatch: '**/api/**/*.spec.ts',
+      use: { baseURL: 'https://jsonplaceholder.typicode.com' },
     },
     {
       name: 'mobile-chrome',
