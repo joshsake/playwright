@@ -6,10 +6,8 @@ export class HomePage {
   readonly heroSubtitle: Locator;
   readonly getStartedButton: Locator;
   readonly navLinks: Locator;
-  readonly nodejsTab: Locator;
-  readonly pythonTab: Locator;
-  readonly javaTab: Locator;
-  readonly dotnetTab: Locator;
+  readonly languageDropdown: Locator;
+  readonly heroLanguageLinks: Locator;
   readonly featureCards: Locator;
   readonly footerLinks: Locator;
   readonly themeToggle: Locator;
@@ -20,15 +18,13 @@ export class HomePage {
     this.heroSubtitle = page.locator('.hero__subtitle');
     this.getStartedButton = page.getByRole('link', { name: 'Get started' });
     this.navLinks = page.locator('.navbar__item');
-    this.nodejsTab = page.getByRole('tab', { name: 'Node.js' });
-    this.pythonTab = page.getByRole('tab', { name: 'Python' });
-    this.javaTab = page.getByRole('tab', { name: 'Java' });
-    this.dotnetTab = page.getByRole('tab', { name: '.NET' });
+    // The navbar language switcher is a dropdown button labeled with the current language
+    this.languageDropdown = page.locator('.navbar').getByRole('button', { name: 'Node.js' });
+    // The hero paragraph links out to each language's docs
+    this.heroLanguageLinks = page.locator('header a[href*="docs/intro"]');
     this.featureCards = page.locator('.col--4');
     this.footerLinks = page.locator('footer a');
-    this.themeToggle = page
-      .locator('[class*="colorModeToggle"] button, .navbar__items--right button[title*="mode"]')
-      .first();
+    this.themeToggle = page.getByRole('button', { name: /dark and light mode/i });
   }
 
   async goto() {
@@ -39,22 +35,21 @@ export class HomePage {
     await this.getStartedButton.click();
   }
 
-  async selectLanguageTab(lang: 'Node.js' | 'Python' | 'Java' | '.NET') {
-    await this.page.getByRole('tab', { name: lang }).click();
+  heroLanguageLink(lang: 'TypeScript' | 'Python' | 'Java' | '.NET'): Locator {
+    return this.page.locator('header').getByRole('link', { name: lang, exact: true });
   }
 
-  async toggleTheme() {
-    await this.themeToggle.click();
+  // The theme button cycles system -> light -> dark, so click until we land on the target
+  async setTheme(theme: 'light' | 'dark') {
+    const htmlEl = this.page.locator('html');
+    for (let i = 0; i < 3; i++) {
+      if ((await htmlEl.getAttribute('data-theme')) === theme) return;
+      await this.themeToggle.click();
+      await this.page.waitForTimeout(200);
+    }
   }
 
   async clickNavLink(name: string) {
     await this.page.getByRole('link', { name, exact: true }).click();
-  }
-
-  async getActiveLanguageTab(): Promise<string | null> {
-    return this.page
-      .locator('[role="tab"][aria-selected="true"]')
-      .first()
-      .textContent();
   }
 }

@@ -29,9 +29,14 @@ test.describe('Search — Modal Behavior', () => {
 test.describe('Search — Keyboard Shortcut', () => {
   test('keyboard shortcut opens search (Ctrl+K / Cmd+K)', async ({ homePage, searchModal, page }) => {
     await homePage.goto();
+    // The shortcut listener attaches after hydration, so wait for the search
+    // button and retry the keypress until the modal appears.
+    await searchModal.searchButton.waitFor();
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control';
-    await page.keyboard.press(`${modifier}+k`);
-    await expect(searchModal.modal).toBeVisible();
+    await expect(async () => {
+      await page.keyboard.press(`${modifier}+k`);
+      await expect(searchModal.modal).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 15_000 });
   });
 });
 
