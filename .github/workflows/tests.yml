@@ -1,0 +1,101 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: API tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      # The api project is browserless — no playwright install needed
+      - run: npx playwright test --project=api
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-api
+          path: playwright-report/
+          retention-days: 14
+
+  browser-tests:
+    name: Browser tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chromium
+            projects: --project=chromium --project=mobile-chrome
+          - browser: firefox
+            projects: --project=firefox
+          - browser: webkit
+            projects: --project=webkit --project=mobile-safari
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: npx playwright test ${{ matrix.projects }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: playwright-report/
+          retention-days: 14
+
+  bdd-tests:
+    name: BDD tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx bddgen
+      - run: npx playwright test --project=bdd
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-bdd
+          path: playwright-report/
+          retention-days: 14
+
+  lighthouse:
+    name: Lighthouse audits
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx bddgen
+      - run: npx playwright test --project=bdd-lighthouse
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-lighthouse
+          path: playwright-report/
+          retention-days: 14
