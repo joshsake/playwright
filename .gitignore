@@ -400,3 +400,5 @@ FodyWeavers.xsd
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/.features-gen/
+/.features-gen-lighthouse/
